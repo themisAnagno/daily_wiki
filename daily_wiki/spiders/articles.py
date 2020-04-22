@@ -10,6 +10,9 @@ class ArticlesSpider(scrapy.Spider):
     allowed_domains = ["en.wikipedia.org"]
     start_urls = ["https://en.wikipedia.org/wiki/Wikipedia:Featured_articles"]
 
+    # Enable Feed storage
+    custom_settings = {"FEED_FORMAT": "json", "FEED_URI": "file:///tmp/results.json"}
+
     def parse(self, response):
 
         host = response.url.split("/wiki")[0]
@@ -21,7 +24,7 @@ class ArticlesSpider(scrapy.Spider):
             if looking_for_header and element.css("h3"):
                 # Get the category of the article by the header
                 looking_for_header = False
-                category = element.css("span::attr(id)").get()
+                category = element.css("span::text").get()
             elif not looking_for_header and element.css("ul"):
                 # Get the article title
                 # Get the list of the articles
